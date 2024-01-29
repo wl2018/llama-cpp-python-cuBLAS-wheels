@@ -20,6 +20,13 @@ jobs:
       version: ${{ inputs.version }}
       config: 'pyver:3.10;cuda:12.1.1'
       
+  build_textgen_tensorcore_wheels_prio:
+    name: Tensorcores Prioritized
+    uses: ./.github/workflows/build-wheels-tensorcores.yml
+    with:
+      version: ${{ inputs.version }}
+      config: 'pyver:3.10;cuda:12.1.1'
+
   build_wheels_main_prio:
     name: Main Prioritized
     uses: ./.github/workflows/build-wheels.yml
@@ -67,9 +74,17 @@ jobs:
       version: ${{ inputs.version }}
       exclude: 'pyver:3.10,cuda:12.1.1'
       
+  build_tensorcore_wheels:
+    name: Tensorcore Wheels
+    needs: build_textgen_wheels
+    uses: ./.github/workflows/build-wheels-tensorcores.yml
+    with:
+      version: ${{ inputs.version }}
+      exclude: 'pyver:3.10,cuda:12.1.1'
+
   build_wheels_cpu:
     name: CPU-only Wheels
-    needs: build_textgen_wheels
+    needs: build_tensorcore_wheels
     uses: ./.github/workflows/build-wheels-cpu.yml
     with:
       version: ${{ inputs.version }}
